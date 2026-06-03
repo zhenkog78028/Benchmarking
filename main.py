@@ -28,9 +28,13 @@ def benchmark1(llms=models, trials=5):
     Return your answer without any formatting (no backticks) or other explanation text, only the code.
     Your answer should have a function `prime(n)` that takes in n and returns the n-th prime
     '''
+    system_prompt = '''You are a code generator. Output ONLY raw code.
+    Do not include markdown code blocks (backticks), explanations, or 'Sure, here is your code' style introductions.'''
     for llm in llms:
         for i in range(trials):
-            response = client.chat(model=llm, messages=[{'role': 'user', 'content': prompt, 'stream': 'false'}])
+            response = client.chat(model=llm, messages=[{'role': 'user', 'content': prompt, 'system': system_prompt, 'stream': 'false'}])
+            if(response.message.content.startswith('```')):
+                response.message.content=response.message.content[response.message.content.find('\n')+1:response.message.content.rfind('\n')] # strip first and last lines, https://stackoverflow.com/questions/28134319/fastest-way-to-remove-first-and-last-lines-from-a-python-string
             try:
                 generation_time = response.total_duration
                 time1 = perf_counter_ns()
@@ -46,17 +50,16 @@ def benchmark1(llms=models, trials=5):
                     data.loc[len(data)] = [llm, 0, generation_time, delta, response.message.content]
 
             except:
-                data.loc[len(data)] = [llm, 0, None, None, None]
+                data.loc[len(data)] = [llm, -1, None, None, response.message.content]
     print(data.to_string())
-    #data.to_html("output.html")
-
+    data.to_clipboard()
             
 
 
     
 
 def main():
-    benchmark1(trials=1)
+    benchmark1(trials=5)
 
 if __name__ == "__main__":
     main()
