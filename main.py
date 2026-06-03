@@ -52,11 +52,15 @@ def benchmark1(llms=models, trials=5):
             except:
                 data.loc[len(data)] = [llm, -1, None, None, response.message.content]
     print(data.to_string())
+<<<<<<< HEAD
     data.to_clipboard()
             
 
 
     
+=======
+    #data.to_html("output.html")
+>>>>>>> ccafa820d5a8239213c02c975c2b3eb4dd19d935
 
 def main():
     benchmark1(trials=5)
