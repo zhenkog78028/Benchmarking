@@ -50,11 +50,6 @@ def benchmark1(llms=models, trials=5):
     print(data.to_string())
     #data.to_html("output.html")
 
-            
-
-
-    
-
 def main():
     benchmark1(trials=1)
 
