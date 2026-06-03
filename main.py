@@ -3,7 +3,6 @@ import pandas as pd
 import ollama
 import os
 from time import perf_counter_ns
-import importlib.util, tempfile, os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -39,10 +38,10 @@ def benchmark1(llms=models, trials=5):
             try:
                 generation_time = response.total_duration
                 time1 = perf_counter_ns()
-                prime = run_code(response.message.content) # obvious security risk, need to think of a way around this; also, what machine would we be running this on?
-                test1 = prime(10)
-                test2 = prime(50)
-                test3 = prime(100)
+                exec(response.message.content) # obvious security risk, need to think of a way around this
+                test1 = eval('prime(10)')
+                test2 = eval('prime(50)')
+                test3 = eval('prime(100)')
                 time2 = perf_counter_ns()
                 delta = time2-time1
                 if(test1 == 29 and test2 == 229 and test3 == 541):
@@ -58,20 +57,6 @@ def benchmark1(llms=models, trials=5):
 
 
     
-
-#We should consider running the code in a sandboxed environment, subprocess, or VM, or using a library like `restrictedpython` to safely execute the code without risking security (but this is allegedly complex).
-def run_code(code: str):
-    """Write code to a temp file, import it as a module, return the prime function."""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
-        f.write(code)  
-        tmp_path = f.name
-    try:
-        spec = importlib.util.spec_from_file_location("prime_module", tmp_path)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        return module.prime
-    finally:
-        os.unlink(tmp_path)  # clean up temp file
 
 def main():
     benchmark1(trials=5)
