@@ -54,10 +54,6 @@ def benchmark1(llms=models, trials=5):
                 data.loc[len(data)] = [llm, -1, None, None, response.message.content]
     print(data.to_string())
     data.to_clipboard()
-            
-
-
-    
 
 #We should consider running the code in a sandboxed environment, subprocess, or VM, or using a library like `restrictedpython` to safely execute the code without risking security (but this is allegedly complex).
 def run_code(code: str):
