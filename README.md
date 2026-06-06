@@ -7,8 +7,8 @@
 ![Data flowchart](images/dataFlow.png)
 
 ### Frontend mockkups:
-Entry page:
+Entry page:  
 ![Entry page mockkup](images/entryPage.png)
 
-Results page:
+Results page:  
 ![Results page mockup](images/resultsPage.png)
