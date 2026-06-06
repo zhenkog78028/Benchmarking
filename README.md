@@ -3,9 +3,12 @@
 * Uses LoRa to create custom benchmarks and automatically runs tests. 
 * Stores results and methodology to compare models over time.
 
-### Data flowchart illustrated:
-![Data flowchart](design/dataFlow.png)
+### Data flowchart:
+![Data flowchart](images/dataFlow.png)
 
-### Frontend mockkups
-![Entry page mockkup](design/entryPage.png)
-![Results page mockup](design/resultsPage.png)
+### Frontend mockkups:
+Entry page:
+![Entry page mockkup](images/entryPage.png)
+
+Results page:
+![Results page mockup](images/resultsPage.png)
