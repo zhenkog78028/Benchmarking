@@ -39,7 +39,7 @@ def benchmark1(llms=models, trials=5):
             try:
                 generation_time = response.total_duration
                 time1 = perf_counter_ns()
-                prime = run_code(response.message.content) # obvious security risk, need to think of a way around this; also, what machine would we be running this on?
+                prime = run_code(response.message.content) # what machine would we be running this on?
                 test1 = prime(10)
                 test2 = prime(50)
                 test3 = prime(100)
