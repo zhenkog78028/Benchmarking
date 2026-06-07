@@ -14,7 +14,7 @@
     "rubric": ""
   }
   ```
-**Format of training data:**
+**Format of training data:**  
 Input:
 ```
 Create a benchmark test based on the following use case and criteria:
@@ -23,7 +23,7 @@ Criteria: {criteria}
 ```
 Output:
 ```
-{prompt}<>{rubric}
+{prompt}<separator>{rubric}
 ```
 
 ### Data flowchart:
