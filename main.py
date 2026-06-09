@@ -38,10 +38,10 @@ def benchmark1(llms=models, trials=5):
             try:
                 generation_time = response.total_duration
                 time1 = perf_counter_ns()
-                exec(response.message.content) # obvious security risk, need to think of a way around this
-                test1 = eval('prime(10)')
-                test2 = eval('prime(50)')
-                test3 = eval('prime(100)')
+                prime = run_code(response.message.content) # what machine would we be running this on?
+                test1 = prime(10)
+                test2 = prime(50)
+                test3 = prime(100)
                 time2 = perf_counter_ns()
                 delta = time2-time1
                 if(test1 == 29 and test2 == 229 and test3 == 541):
@@ -53,10 +53,6 @@ def benchmark1(llms=models, trials=5):
                 data.loc[len(data)] = [llm, -1, None, None, response.message.content]
     print(data.to_string())
     data.to_clipboard()
-            
-
-
-    
 
 def main():
     benchmark1(trials=5)
