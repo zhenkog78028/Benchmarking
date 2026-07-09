@@ -4,8 +4,8 @@ import os
 from time import perf_counter_ns
 
 #We should consider running the code in a sandboxed environment, subprocess, or VM, or using a library like `restrictedpython` to safely execute the code without risking security (but this is allegedly complex).
+#Write code to a temp file, import it as a module, return the prime function.
 def run_code(code: str):
-    """Write code to a temp file, import it as a module, return the prime function."""
     with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
         f.write(code)
         tmp_path = f.name
@@ -18,6 +18,7 @@ def run_code(code: str):
     finally:
         os.unlink(tmp_path)
 
+#runs the generated code against a pre-set rubric
 def run_benchmark(llm, result, data):
     try:
         time1 = perf_counter_ns()
@@ -30,6 +31,7 @@ def run_benchmark(llm, result, data):
         time2 = perf_counter_ns()
         delta = time2 - time1
 
+        #we need to make this better and not just one single test
         success = int(test1 == 29 and test2 == 229 and test3 == 541)
         data.loc[len(data)] = [llm, success, result.generation_time_ns, delta, result.code]
 

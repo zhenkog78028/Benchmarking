@@ -46,6 +46,6 @@ GENERATION_CONFIG = GenerationConfig(
     prime_prompt=PRIME_PROMPT,
     system_prompt=SYSTEM_PROMPT,
     client=CLIENT,
-    trials=1,
-    attempts=3,
+    trials=1, #needs to not be hardcoded
+    attempts=3, #needs to not be hardcoded
 )

@@ -8,21 +8,23 @@ from execution import run_benchmark
 from generation import generate_code
 
 #this could be refactored to be somewhere else, but this is a good level of abstraction for now
-def benchmark(llms=MODELS,gen_config=GENERATION_CONFIG):
+def benchmark(llms, gen_config):
     #we need a way to display the results
     data = pd.DataFrame(columns=DATA_COLUMNS)
 
     for llm in llms:
-        for i in range(gen_config.trials):
+        for _ in range(gen_config.trials):
+            #generates code using the prompt and system prompt from config.py, and the model specified in llm
             result = generate_code(gen_config.prime_prompt, gen_config.system_prompt, llm, gen_config.client, attempts=gen_config.attempts)
-
+            
+            #runs the code, only records time
             run_benchmark(llm, result, data)
 
     return data
 
 def main():
     #this pretty much runs the test
-    outcome = benchmark(config=GENERATION_CONFIG)
+    outcome = benchmark(MODELS, GENERATION_CONFIG)
     print(outcome.to_string())
     #outcome.to_clipboard()
 

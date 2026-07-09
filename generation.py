@@ -2,13 +2,14 @@ import time
 from openai import RateLimitError
 from dataclasses import dataclass
 
+#dataclass for robustness as the amount of data returned grows eventually
 @dataclass
 class GenerationResult:
     code: str | None
     generation_time_ns: int | None
 
+#Generate code using the specified LLM and prompt.
 def generate_code(prompt: str, system_prompt: str, llm: str, client, attempts: int):
-    """Generate code using the specified LLM and prompt."""
     start_generation = time.perf_counter_ns()
 
     response = None
@@ -45,6 +46,7 @@ def generate_code(prompt: str, system_prompt: str, llm: str, client, attempts: i
 
     code = response.choices[0].message.content or ""
 
+    # Remove markdown code blocks if present
     if code.startswith("```"):
         code = code[code.find("\n") + 1:code.rfind("\n")]
     
