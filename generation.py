@@ -32,6 +32,7 @@ def generate_code(prompt: str, system_prompt: str, llm: str, client, attempts: i
             time.sleep(2 ** attempt)
     
     if response is None:
+        print(f"Model: {llm}, No response received after {attempts} attempts. Skipping this trial.")
         return GenerationResult(
             code=None,
             generation_time_ns=None,
