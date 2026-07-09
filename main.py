@@ -24,7 +24,7 @@ models = (
     "cohere/north-mini-code:free",
 )
 
-def benchmark1(llms=models, trials=5):
+def benchmark1(llms=models, trials=1):
     data = pd.DataFrame(columns=("model", "success", "generation_speed", "execution_speed", "code"))
 
     prompt = """Please write a python function to calculate the n-th prime number.
@@ -39,6 +39,9 @@ Do not include markdown code blocks (backticks), explanations, or 'Sure, here is
         for i in range(trials):
             start_generation = perf_counter_ns()
 
+            response = None
+
+            #trying my best to avoid rate limits with free models
             for attempt in range(5):
                 try:
                     response = client.chat.completions.create(
@@ -52,8 +55,14 @@ Do not include markdown code blocks (backticks), explanations, or 'Sure, here is
                     break
                 except RateLimitError:
                     if attempt == 4:
-                        raise
+                        print("Rate limit exceeded. Skipping this trial for model: ", llm)
+                        break
                     time.sleep(2 ** attempt)
+            
+            if response is None:
+                break      # move to the next model
+            else:
+                print(f"Model: {llm}, Trial: {i+1}, Response received.")
 
             end_generation = perf_counter_ns()
             generation_time = end_generation - start_generation
@@ -67,7 +76,7 @@ Do not include markdown code blocks (backticks), explanations, or 'Sure, here is
                 time1 = perf_counter_ns()
 
                 prime = run_code(code)
-                test1 = prime(10)
+                test1 = prime(10) # what machine would we be running this on?
                 test2 = prime(50)
                 test3 = prime(100)
 
@@ -83,7 +92,7 @@ Do not include markdown code blocks (backticks), explanations, or 'Sure, here is
     print(data.to_string())
     data.to_clipboard()
 
-
+#We should consider running the code in a sandboxed environment, subprocess, or VM, or using a library like `restrictedpython` to safely execute the code without risking security (but this is allegedly complex).
 def run_code(code: str):
     """Write code to a temp file, import it as a module, return the prime function."""
     with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
@@ -100,7 +109,7 @@ def run_code(code: str):
 
 
 def main():
-    benchmark1(trials=5)
+    benchmark1(trials=1)
 
 
 if __name__ == "__main__":
