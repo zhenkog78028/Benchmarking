@@ -1,5 +1,11 @@
 import time
 from openai import RateLimitError
+from dataclasses import dataclass
+
+@dataclass
+class GenerationResult:
+    code: str | None
+    generation_time_ns: int | None
 
 def generate_code(prompt: str, system_prompt: str, llm: str, client, attempts: int):
     """Generate code using the specified LLM and prompt."""
@@ -26,7 +32,10 @@ def generate_code(prompt: str, system_prompt: str, llm: str, client, attempts: i
             time.sleep(2 ** attempt)
     
     if response is None:
-        return None, None    # move to the next model
+        return GenerationResult(
+            code=None,
+            generation_time_ns=None,
+        )    # move to the next model
     else:
         print(f"Model: {llm}, Response received.")
 
@@ -38,4 +47,7 @@ def generate_code(prompt: str, system_prompt: str, llm: str, client, attempts: i
     if code.startswith("```"):
         code = code[code.find("\n") + 1:code.rfind("\n")]
     
-    return code, generation_time
+    return GenerationResult(
+        code=code,
+        generation_time_ns=generation_time,
+    )

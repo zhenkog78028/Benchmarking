@@ -20,12 +20,12 @@ def benchmark1(llms=models, trials=1):
 
     for llm in llms:
         for i in range(trials):
-            code, generation_time = generate_code(prompt, system_prompt, llm, client, attempts=5)
+            result = generate_code(prompt, system_prompt, llm, client, attempts=5)
 
             try:
                 time1 = perf_counter_ns()
 
-                prime = run_code(code)
+                prime = run_code(result.code)
                 test1 = prime(10) # what machine would we be running this on?
                 test2 = prime(50)
                 test3 = prime(100)
@@ -34,10 +34,10 @@ def benchmark1(llms=models, trials=1):
                 delta = time2 - time1
 
                 success = int(test1 == 29 and test2 == 229 and test3 == 541)
-                data.loc[len(data)] = [llm, success, generation_time, delta, code]
+                data.loc[len(data)] = [llm, success, result.generation_time_ns, delta, result.code]
 
             except Exception:
-                data.loc[len(data)] = [llm, -1, generation_time, None, code]
+                data.loc[len(data)] = [llm, -1, result.generation_time_ns, None, result.code]
 
     print(data.to_string())
     data.to_clipboard()
