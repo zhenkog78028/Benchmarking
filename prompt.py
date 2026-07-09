@@ -1,3 +1,6 @@
+#we could enhance our model using this idea, but that is quite advanced
+#https://arxiv.org/abs/2506.13131
+
 def getPrompt(description:str, criteria:str, client, models: list[str]):
     prompts = []
     rubrics = []
