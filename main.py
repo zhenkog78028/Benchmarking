@@ -2,13 +2,13 @@
 import pandas as pd
 import os
 from time import perf_counter_ns
-import importlib.util
-import tempfile
 from dotenv import load_dotenv
 from openai import OpenAI
 import time
 from openai import RateLimitError
 
+from config import PRIME_PROMPT, SYSTEM_PROMPT, MODELS
+from execution import run_code
 
 load_dotenv()
 
@@ -19,21 +19,14 @@ client = OpenAI(
     api_key=OPENROUTER_API_KEY,
 )
 
-models = (
-    "openai/gpt-oss-120b:free",
-    "cohere/north-mini-code:free",
-)
+models = MODELS
 
 def benchmark1(llms=models, trials=1):
     data = pd.DataFrame(columns=("model", "success", "generation_speed", "execution_speed", "code"))
 
-    prompt = """Please write a python function to calculate the n-th prime number.
-Return your answer without any formatting (no backticks) or other explanation text, only the code.
-Your answer should have a function `prime(n)` that takes in n and returns the n-th prime
-"""
+    prompt = PRIME_PROMPT
 
-    system_prompt = """You are a code generator. Output ONLY raw code.
-Do not include markdown code blocks (backticks), explanations, or 'Sure, here is your code' style introductions."""
+    system_prompt = SYSTEM_PROMPT
 
     for llm in llms:
         for i in range(trials):
@@ -91,22 +84,6 @@ Do not include markdown code blocks (backticks), explanations, or 'Sure, here is
 
     print(data.to_string())
     data.to_clipboard()
-
-#We should consider running the code in a sandboxed environment, subprocess, or VM, or using a library like `restrictedpython` to safely execute the code without risking security (but this is allegedly complex).
-def run_code(code: str):
-    """Write code to a temp file, import it as a module, return the prime function."""
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-        f.write(code)
-        tmp_path = f.name
-
-    try:
-        spec = importlib.util.spec_from_file_location("prime_module", tmp_path)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        return module.prime
-    finally:
-        os.unlink(tmp_path)
-
 
 def main():
     benchmark1(trials=1)
