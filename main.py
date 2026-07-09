@@ -1,23 +1,13 @@
 #import sqlite3
 import pandas as pd
-import os
+#import os
 from time import perf_counter_ns
-from dotenv import load_dotenv
-from openai import OpenAI
-import time
-from openai import RateLimitError
 
-from config import PRIME_PROMPT, SYSTEM_PROMPT, MODELS
+from config import PRIME_PROMPT, SYSTEM_PROMPT, MODELS, CLIENT
 from execution import run_code
+from generation import generate_code
 
-load_dotenv()
-
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-
-client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key=OPENROUTER_API_KEY,
-)
+client = CLIENT
 
 models = MODELS
 
@@ -30,40 +20,7 @@ def benchmark1(llms=models, trials=1):
 
     for llm in llms:
         for i in range(trials):
-            start_generation = perf_counter_ns()
-
-            response = None
-
-            #trying my best to avoid rate limits with free models
-            for attempt in range(5):
-                try:
-                    response = client.chat.completions.create(
-                        model=llm,
-                        messages=[
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": prompt},
-                        ],
-                        stream=False,
-                    )
-                    break
-                except RateLimitError:
-                    if attempt == 4:
-                        print("Rate limit exceeded. Skipping this trial for model: ", llm)
-                        break
-                    time.sleep(2 ** attempt)
-            
-            if response is None:
-                break      # move to the next model
-            else:
-                print(f"Model: {llm}, Trial: {i+1}, Response received.")
-
-            end_generation = perf_counter_ns()
-            generation_time = end_generation - start_generation
-
-            code = response.choices[0].message.content or ""
-
-            if code.startswith("```"):
-                code = code[code.find("\n") + 1:code.rfind("\n")]
+            code, generation_time = generate_code(prompt, system_prompt, llm, client, attempts=5)
 
             try:
                 time1 = perf_counter_ns()

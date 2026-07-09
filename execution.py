@@ -1,5 +1,6 @@
 import importlib.util
 import tempfile
+import os
 
 #We should consider running the code in a sandboxed environment, subprocess, or VM, or using a library like `restrictedpython` to safely execute the code without risking security (but this is allegedly complex).
 def run_code(code: str):

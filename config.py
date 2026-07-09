@@ -1,3 +1,16 @@
+from dotenv import load_dotenv
+from openai import OpenAI
+import os
+
+load_dotenv()
+
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+
+CLIENT = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=OPENROUTER_API_KEY,
+)
+
 MODELS = (
     "openai/gpt-oss-120b:free",
     "cohere/north-mini-code:free",
