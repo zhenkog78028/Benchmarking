@@ -5,8 +5,8 @@ from time import perf_counter_ns
 
 #We should consider running the code in a sandboxed environment, subprocess, or VM, or using a library like `restrictedpython` to safely execute the code without risking security (but this is allegedly complex).
 #Write code to a temp file, import it as a module, return the prime function.
-def run_code(code: str):
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
+def run_code(code: str, language_suffix: str):
+    with tempfile.NamedTemporaryFile(mode="w", suffix=language_suffix, delete=False) as f:
         f.write(code)
         tmp_path = f.name
 
@@ -23,7 +23,7 @@ def run_benchmark(llm, result, data):
     try:
         time1 = perf_counter_ns()
 
-        prime = run_code(result.code)
+        prime = run_code(result.code, ".py")
         test1 = prime(10) # what machine would we be running this on?
         test2 = prime(50)
         test3 = prime(100)

@@ -15,7 +15,7 @@ def benchmark(llms, gen_config):
     for llm in llms:
         for _ in range(gen_config.trials):
             #generates code using the prompt and system prompt from config.py, and the model specified in llm
-            result = generate_code(gen_config.prime_prompt, gen_config.system_prompt, llm, gen_config.client, attempts=gen_config.attempts)
+            result = generate_code(gen_config.prime_prompt, gen_config.system_prompt, llm, gen_config.client, attempts=gen_config.attempts) #should eventually pass generation_config as a whole, but for now I found this to be better for testing
             
             #runs the code, only records time
             run_benchmark(llm, result, data)
