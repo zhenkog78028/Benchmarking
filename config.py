@@ -21,35 +21,19 @@ CLIENT = OpenAI(
 )
 
 ASSESSORS = (
-    "inclusionai/ling-3.0-flash:free",
-    "poolside/laguna-s-2.1:free",
-    "poolside/laguna-xs-2.1:free",
-    "cohere/north-mini-code:free",
-    "nvidia/nemotron-3-ultra-550b-a55b:free",
-    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-    "google/gemma-4-26b-a4b-it:free",
-    "google/gemma-4-31b-it:free",
-    "nvidia/nemotron-3-super-120b-a12b:free",
-    "nvidia/nemotron-3-nano-30b-a3b:free",
-    "nvidia/nemotron-nano-12b-v2-vl:free",
-    "nvidia/nemotron-nano-9b-v2:free",
-    "openai/gpt-oss-20b:free",
+    "qwen/qwen3.7-flash",
+    "openai/gpt-5.6-luna",
+    #"google/gemini-3.5-flash-lite",
+    #"deepseek/deepseek-v4-flash",
 )
 
 ASSESSEES = (
-    "inclusionai/ling-3.0-flash:free",
-    "poolside/laguna-s-2.1:free",
-    "poolside/laguna-xs-2.1:free",
-    "cohere/north-mini-code:free",
-    "nvidia/nemotron-3-ultra-550b-a55b:free",
-    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-    "google/gemma-4-26b-a4b-it:free",
-    "google/gemma-4-31b-it:free",
-    "nvidia/nemotron-3-super-120b-a12b:free",
-    "nvidia/nemotron-3-nano-30b-a3b:free",
-    "nvidia/nemotron-nano-12b-v2-vl:free",
-    "nvidia/nemotron-nano-9b-v2:free",
-    "openai/gpt-oss-20b:free",
+    #"google/gemini-3.5-flash-lite",
+    "thinkingmachines/inkling",
+    #"openai/gpt-5.6-luna",
+    #"qwen/qwen3.7-flash",
+    "minimax/minimax-m3",
+    #"deepseek/deepseek-v4-flash",
 )
 
 DATA_COLUMNS = (

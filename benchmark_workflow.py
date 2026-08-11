@@ -64,11 +64,11 @@ def validate_rubric(value: dict[str, Any]) -> None:
         raise ValueError("rubric criterion weights must total 100")
 
 
-def validate_evaluation(value: dict[str, Any]) -> int:
+def validate_evaluation(value: dict[str, Any]) -> float:
     score = value.get("final_score")
-    if not isinstance(score, int) or isinstance(score, bool) or not 1 <= score <= 10:
-        raise ValueError("evaluation final_score must be an integer from 1 through 10")
-    return score
+    if not isinstance(score, int) or isinstance(score, bool) or not 1 <= score <= 100:
+        raise ValueError("evaluation final_score must be an integer from 1 through 100")
+    return score / 10
 
 
 def create_benchmarks(
@@ -135,13 +135,14 @@ def run_benchmark(
 
 def summarise_results(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Aggregate valid 1–10 evaluator scores for each assessee model."""
-    scores: defaultdict[str, list[int]] = defaultdict(list)
+    scores: defaultdict[str, list[float]] = defaultdict(list)
     for result in results:
-        if isinstance(result.get("final_score"), int):
-            scores[result["assessee"]].append(result["final_score"])
+        score = result.get("final_score")
+        if isinstance(score, (int, float)) and not isinstance(score, bool):
+            scores[result["assessee"]].append(float(score))
     return sorted(
         (
-            {"model": model, "final_score": round(statistics.mean(values), 2), "successful_evaluations": len(values)}
+            {"model": model, "final_score": statistics.mean(values), "successful_evaluations": len(values)}
             for model, values in scores.items()
         ),
         key=lambda item: (-item["final_score"], item["model"]),

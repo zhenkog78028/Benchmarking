@@ -8,9 +8,6 @@ import random
 
 RETRYABLE_STATUS = {408, 409, 429, 500, 502, 503, 504}
 
-
-
-
 @dataclass
 class GenerationResult:
     """A generated code response and the time spent obtaining it."""
