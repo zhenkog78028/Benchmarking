@@ -1,37 +1,33 @@
-# Custom AI Evaluator
-* Creates custom benchmark tests and rubrics to assess various AI models against each other on specific criteria and use cases. 
-* Uses LoRa to create custom benchmarks and automatically runs tests. 
-* Stores results and methodology to compare models over time.
+# LLM Benchmark Web UI
 
-### LoRa training data structure:
-**Data collected by agent:**
-```json
-{
-    "doi": "",
-    "description": "",
-    "criteria": "",
-    "prompt": "",
-    "rubric": ""
-  }
-  ```
-**Format of training data:**  
-Input:
-```
-Create a benchmark test based on the following use case and criteria:
-Use Case: {description}
-Criteria: {criteria}
-```
-Output:
-```
-{prompt}<separator>{rubric}
+React (Vite) frontend + FastAPI backend for the supplied benchmark workflow.
+
+## Add your existing Python files
+Place these in `backend/`:
+- `config.py`
+- `benchmark_workflow.py`
+- `generation.py`
+
+Keep your validator unchanged. The UI displays evaluator scores exactly as produced by the workflow.
+
+## Backend
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+pip install -r requirements.txt
+# Create backend/.env containing OPENROUTER_API_KEY=...
+uvicorn main:app --reload
 ```
 
-### Data flowchart:
-![Data flowchart](images/dataFlow.png)
+## Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-### Frontend mockkups:
-**Entry page:**  
-![Entry page mockkup](images/entryPage.png)
+Open http://localhost:5173.
 
-**Results page:**  
-![Results page mockup](images/resultsPage.png)
+## Notes
+The job store is intentionally in-memory for simplicity. Restarting FastAPI clears completed/running jobs. For production, replace it with Redis/database-backed jobs and a worker queue.

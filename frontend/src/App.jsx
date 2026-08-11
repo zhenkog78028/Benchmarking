@@ -1,0 +1,2 @@
+import {Routes,Route,Navigate} from 'react-router-dom'; import SetupPage from './pages/SetupPage'; import RunningPage from './pages/RunningPage'; import ResultsPage from './pages/ResultsPage';
+export default function App(){return <Routes><Route path="/" element={<SetupPage/>}/><Route path="/running/:id" element={<RunningPage/>}/><Route path="/results/:id" element={<ResultsPage/>}/><Route path="*" element={<Navigate to="/"/>}/></Routes>}
