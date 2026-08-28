@@ -52,7 +52,7 @@ def generate_text(
     llm: str,
     client,
     attempts: int = 3,
-    timeout: float = 15.0,
+    timeout: float = 45.0,
     max_tokens: int | None = None,
 ) -> str:
     """

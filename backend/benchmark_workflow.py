@@ -166,8 +166,10 @@ def score_evaluation(
     """
     Validate evaluator output and calculate scores deterministically.
 
-    Returns:
-        (final_score_1_to_10, weighted_percentage)
+    Score conventions:
+    - Criterion score: 0-100 integer
+    - Weighted percentage: 0-100 float
+    - Final score: 1.0-10.0 float
     """
     if set(value) != {
         "criterion_scores",
@@ -251,7 +253,7 @@ def score_evaluation(
             f"unknown automatic failures: {sorted(unknown_failures)}"
         )
 
-    # Any valid automatic failure forces the benchmark score to 1.
+    # Automatic failures receive the minimum score.
     if failures:
         return 1.0, 0.0
 
@@ -262,14 +264,15 @@ def score_evaluation(
         for criterion_id, score in submitted_scores.items()
     )
 
-    # Equivalent to the previous rubric formula:
-    # max(1, min(10, round(weighted_percentage / 10)))
-    final_score = max(
-        1,
-        min(10, round(weighted_percentage / 10)),
-    )
+    # Convert 0-100 percentage to the canonical 1-10 scale.
+    # Preserve one decimal place rather than rounding to an integer.
+    final_score = round(weighted_percentage / 10, 1)
 
-    return float(final_score), weighted_percentage
+    # Benchmark scores use a minimum of 1.0.
+    final_score = max(1.0, min(10.0, final_score))
+
+    return final_score, round(weighted_percentage, 1)
+
 
 
 # ---------------------------------------------------------------------------
@@ -597,30 +600,34 @@ def run_benchmark(
 
 def summarise_results(
     results: list[dict[str, Any]],
+    assessee_models: list[str] | tuple[str, ...],
 ) -> list[dict[str, Any]]:
-    """Aggregate valid 1-10 evaluator scores for each assessee model."""
-    scores: defaultdict[str, list[float]] = defaultdict(list)
+    """Aggregate scores while preserving every selected assessee."""
+
+    scores: defaultdict[str, list[int]] = defaultdict(list)
 
     for result in results:
         score = result.get("final_score")
 
-        if (
-            isinstance(score, (int, float))
-            and not isinstance(score, bool)
-        ):
-            scores[result["assessee"]].append(float(score))
+        if isinstance(score, int) and not isinstance(score, bool):
+            scores[result["assessee"]].append(score)
+
+    summary = []
+
+    for model in assessee_models:
+        values = scores[model]
+
+        summary.append({
+            "model": model,
+            "final_score": statistics.mean(values) if values else None,
+            "successful_evaluations": len(values),
+        })
 
     return sorted(
-        (
-            {
-                "model": model,
-                "final_score": statistics.mean(values),
-                "successful_evaluations": len(values),
-            }
-            for model, values in scores.items()
-        ),
+        summary,
         key=lambda item: (
-            -item["final_score"],
+            item["final_score"] is None,
+            -(item["final_score"] or 0),
             item["model"],
         ),
     )

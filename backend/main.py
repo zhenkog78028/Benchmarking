@@ -119,12 +119,14 @@ def execute_job(
             max_workers=LLM_WORKERS,
         )
 
-        model_scores = summarise_results(results)
+        model_scores = summarise_results(results, request.assessees)
 
         report = {
             "use_case": request.use_case,
             "criteria": request.criteria,
             "benchmarks": benchmarks,
+            "assessors": list(request.assessors),
+            "assessees": list(request.assessees),
             "results": results,
             "model_scores": model_scores,
         }
